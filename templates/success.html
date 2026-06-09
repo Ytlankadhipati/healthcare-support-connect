@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Submission Successful — Healthcare Support Connect{% endblock %}
+
+{% block content %}
+<section class="hsc-section bg-white">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8 text-center">
+
+        <div class="success-animation mb-4">
+          <div class="success-ring"></div>
+          <div class="success-icon">
+            <i class="bi bi-check-lg"></i>
+          </div>
+        </div>
+
+        <h2 class="success-title">
+          {% if form_type == 'patient' %}
+            Request Submitted!
+          {% else %}
+            Registration Complete!
+          {% endif %}
+        </h2>
+
+        <p class="success-body">
+          Thank you, <strong>{{ name }}</strong>!
+          {% if form_type == 'patient' %}
+            Your health support request has been received. Our team will review it and connect you
+            with a volunteer within <strong>24 hours</strong>.
+          {% else %}
+            You've successfully registered as a volunteer with Healthcare Support Connect.
+            We'll be in touch soon with details on next steps and opportunities.
+          {% endif %}
+        </p>
+
+        {% if form_type == 'patient' and summary %}
+        <!-- AI Summary Card -->
+        <div class="ai-summary-card mt-4 mb-4">
+          <div class="ai-summary-header">
+            <i class="bi bi-stars me-2"></i>AI-Generated Health Summary
+          </div>
+          <div class="ai-summary-body">
+            <p class="mb-0">{{ summary }}</p>
+          </div>
+          <div class="ai-summary-footer">
+            <i class="bi bi-info-circle me-1"></i>
+            This summary was automatically generated to help our volunteers understand your concern faster.
+            It does not constitute medical advice.
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- What Happens Next -->
+        <div class="next-steps mt-4 text-start">
+          <h6 class="fw-600 mb-3 text-center">What Happens Next?</h6>
+          <div class="step-row">
+            <div class="step-dot step-dot--done"><i class="bi bi-check"></i></div>
+            <div>
+              <strong>Form Submitted</strong>
+              <small class="d-block text-muted">Your information has been saved securely.</small>
+            </div>
+          </div>
+          <div class="step-row">
+            <div class="step-dot step-dot--active"></div>
+            <div>
+              <strong>Review in Progress</strong>
+              <small class="d-block text-muted">Our team is reviewing your submission.</small>
+            </div>
+          </div>
+          <div class="step-row">
+            <div class="step-dot"></div>
+            <div>
+              <strong>Volunteer Assigned</strong>
+              <small class="d-block text-muted">
+                {% if form_type == 'patient' %}
+                  A qualified volunteer will contact you within 24 hours.
+                {% else %}
+                  We'll send you upcoming volunteer opportunities.
+                {% endif %}
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Urgent notice for patients -->
+        {% if form_type == 'patient' %}
+        <div class="urgent-note mt-4">
+          <i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>
+          <strong>Medical Emergency?</strong> Please call emergency services (112) or go to your nearest hospital immediately.
+          This platform is for non-emergency health guidance only.
+        </div>
+        {% endif %}
+
+        <!-- CTA Buttons -->
+        <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+          <a href="{{ url_for('index') }}" class="btn hsc-btn-primary">
+            <i class="bi bi-house me-2"></i>Back to Home
+          </a>
+          {% if form_type == 'patient' %}
+          <a href="{{ url_for('volunteer_form') }}" class="btn hsc-btn-outline">
+            <i class="bi bi-people me-2"></i>Join as Volunteer
+          </a>
+          {% else %}
+          <a href="{{ url_for('patient_form') }}" class="btn hsc-btn-outline">
+            <i class="bi bi-clipboard2-heart me-2"></i>Submit Patient Request
+          </a>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

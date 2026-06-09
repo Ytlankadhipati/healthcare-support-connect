@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — Healthcare Support Connect{% endblock %}
+
+{% block content %}
+
+<!-- Dashboard Header -->
+<section class="page-header page-header--dark">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <div>
+        <div class="section-eyebrow"><i class="bi bi-grid-3x3-gap me-2"></i>Admin</div>
+        <h1 class="page-title mb-1">Dashboard</h1>
+        <p class="page-subtitle mb-0">All patient requests, volunteer registrations, and contact messages.</p>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="{{ url_for('patient_form') }}" class="btn btn-sm hsc-btn-outline">
+          <i class="bi bi-plus me-1"></i>New Patient
+        </a>
+        <a href="{{ url_for('volunteer_form') }}" class="btn btn-sm hsc-btn-green">
+          <i class="bi bi-plus me-1"></i>New Volunteer
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hsc-section" style="background: var(--hsc-bg-light)">
+  <div class="container">
+
+    <!-- ── Summary Stats ── -->
+    <div class="row g-3 mb-4">
+      <div class="col-sm-6 col-lg-3">
+        <div class="dash-stat-card dash-stat-card--blue">
+          <div class="dsc-icon"><i class="bi bi-clipboard2-heart-fill"></i></div>
+          <div class="dsc-value">{{ patients | length }}</div>
+          <div class="dsc-label">Patient Requests</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="dash-stat-card dash-stat-card--green">
+          <div class="dsc-icon"><i class="bi bi-people-fill"></i></div>
+          <div class="dsc-value">{{ volunteers | length }}</div>
+          <div class="dsc-label">Volunteers Registered</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="dash-stat-card dash-stat-card--purple">
+          <div class="dsc-icon"><i class="bi bi-envelope-fill"></i></div>
+          <div class="dsc-value">{{ contacts | length }}</div>
+          <div class="dsc-label">Contact Messages</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="dash-stat-card dash-stat-card--teal">
+          <div class="dsc-icon"><i class="bi bi-stars"></i></div>
+          <div class="dsc-value">{{ patients | selectattr('ai_summary') | list | length }}</div>
+          <div class="dsc-label">AI Summaries Generated</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════ PATIENT REQUESTS TABLE ══════════════════ -->
+    <div class="dash-card mb-4">
+      <div class="dash-card-header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-clipboard2-heart-fill text-primary"></i>
+          <h5 class="mb-0">Patient Support Requests</h5>
+        </div>
+        <span class="badge bg-primary rounded-pill">{{ patients | length }}</span>
+      </div>
+      <div class="dash-card-body">
+        {% if patients %}
+        <div class="table-responsive">
+          <table class="table hsc-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Age / Gender</th>
+                <th>Contact</th>
+                <th>Concern</th>
+                <th>AI Summary</th>
+                <th>Submitted</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in patients %}
+              <tr>
+                <td><span class="row-id">{{ p['id'] }}</span></td>
+                <td class="fw-600">{{ p['full_name'] }}</td>
+                <td>
+                  {{ p['age'] }} yrs<br>
+                  <small class="text-muted">{{ p['gender'] }}</small>
+                </td>
+                <td>
+                  <div>{{ p['mobile'] }}</div>
+                  <small class="text-muted">{{ p['email'] }}</small>
+                </td>
+                <td>
+                  <span class="concern-badge">{{ p['health_concern'] }}</span>
+                </td>
+                <td>
+                  {% if p['ai_summary'] %}
+                    <div class="ai-cell">
+                      <i class="bi bi-stars text-warning me-1"></i>
+                      <span class="ai-text">{{ p['ai_summary'] }}</span>
+                    </div>
+                  {% else %}
+                    <span class="text-muted fst-italic">—</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <small class="text-muted">{{ p['created_at'][:10] }}<br>{{ p['created_at'][11:16] }}</small>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+          <i class="bi bi-inbox"></i>
+          <p>No patient requests yet.</p>
+          <a href="{{ url_for('patient_form') }}" class="btn btn-sm hsc-btn-primary">Add First Patient</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- ═══════════════ VOLUNTEER TABLE ══════════════════════════ -->
+    <div class="dash-card mb-4">
+      <div class="dash-card-header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-people-fill text-success"></i>
+          <h5 class="mb-0">Volunteer Registrations</h5>
+        </div>
+        <span class="badge bg-success rounded-pill">{{ volunteers | length }}</span>
+      </div>
+      <div class="dash-card-body">
+        {% if volunteers %}
+        <div class="table-responsive">
+          <table class="table hsc-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Contact</th>
+                <th>Skills</th>
+                <th>Availability</th>
+                <th>Address</th>
+                <th>Registered</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for v in volunteers %}
+              <tr>
+                <td><span class="row-id row-id--green">{{ v['id'] }}</span></td>
+                <td class="fw-600">{{ v['full_name'] }}</td>
+                <td>
+                  <div>{{ v['mobile'] }}</div>
+                  <small class="text-muted">{{ v['email'] }}</small>
+                </td>
+                <td>
+                  <div class="skills-cell">
+                    {% for skill in v['skills'].split(',')[:3] %}
+                      <span class="skill-tag">{{ skill.strip() }}</span>
+                    {% endfor %}
+                  </div>
+                </td>
+                <td>
+                  <span class="avail-badge">{{ v['availability'] }}</span>
+                </td>
+                <td>
+                  <small class="text-muted">{{ v['address'][:60] }}{% if v['address']|length > 60 %}…{% endif %}</small>
+                </td>
+                <td>
+                  <small class="text-muted">{{ v['created_at'][:10] }}<br>{{ v['created_at'][11:16] }}</small>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+          <i class="bi bi-inbox"></i>
+          <p>No volunteer registrations yet.</p>
+          <a href="{{ url_for('volunteer_form') }}" class="btn btn-sm hsc-btn-green">Add First Volunteer</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- ══════════════ CONTACT MESSAGES TABLE ════════════════════ -->
+    <div class="dash-card">
+      <div class="dash-card-header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-envelope-fill" style="color: var(--hsc-purple)"></i>
+          <h5 class="mb-0">Contact Messages</h5>
+        </div>
+        <span class="badge rounded-pill" style="background:var(--hsc-purple)">{{ contacts | length }}</span>
+      </div>
+      <div class="dash-card-body">
+        {% if contacts %}
+        <div class="table-responsive">
+          <table class="table hsc-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Received</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for c in contacts %}
+              <tr>
+                <td><span class="row-id row-id--purple">{{ c['id'] }}</span></td>
+                <td class="fw-600">{{ c['name'] }}</td>
+                <td><small>{{ c['email'] }}</small></td>
+                <td>
+                  <span class="msg-preview">
+                    {{ c['message'][:100] }}{% if c['message']|length > 100 %}…{% endif %}
+                  </span>
+                </td>
+                <td>
+                  <small class="text-muted">{{ c['created_at'][:10] }}<br>{{ c['created_at'][11:16] }}</small>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+          <i class="bi bi-inbox"></i>
+          <p>No contact messages yet.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div><!-- /container -->
+</section>
+
+{% endblock %}

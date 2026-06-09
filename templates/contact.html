@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Contact Us — Healthcare Support Connect{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<section class="page-header page-header--purple">
+  <div class="container">
+    <div class="section-eyebrow"><i class="bi bi-chat-heart me-2"></i>Reach Out</div>
+    <h1 class="page-title">Contact Us</h1>
+    <p class="page-subtitle">
+      Have a question, feedback, or need guidance? We'd love to hear from you.
+    </p>
+  </div>
+</section>
+
+<section class="hsc-section bg-white">
+  <div class="container">
+    <div class="row g-5 align-items-start">
+
+      <!-- Contact Form -->
+      <div class="col-lg-7">
+        <div class="form-card">
+          <div class="form-card-header form-card-header--purple">
+            <i class="bi bi-envelope-open me-2"></i>Send a Message
+          </div>
+          <div class="form-card-body">
+            <form method="POST" action="{{ url_for('contact') }}" novalidate>
+
+              <div class="mb-3">
+                <label class="form-label" for="name">Your Name <span class="required">*</span></label>
+                <div class="input-group-icon">
+                  <i class="bi bi-person"></i>
+                  <input type="text" class="form-control hsc-input ps-icon" id="name" name="name"
+                         placeholder="e.g. Sunita Patel"
+                         value="{{ form_data.get('name', '') }}"
+                         required maxlength="100" />
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label" for="email">Email Address <span class="required">*</span></label>
+                <div class="input-group-icon">
+                  <i class="bi bi-envelope"></i>
+                  <input type="email" class="form-control hsc-input ps-icon" id="email" name="email"
+                         placeholder="e.g. sunita@example.com"
+                         value="{{ form_data.get('email', '') }}"
+                         required />
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label" for="message">Message <span class="required">*</span></label>
+                <textarea class="form-control hsc-textarea" id="message" name="message"
+                          rows="6" required minlength="10"
+                          placeholder="Type your message here...">{{ form_data.get('message', '') }}</textarea>
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-lg hsc-btn-purple">
+                  <i class="bi bi-send me-2"></i>Send Message
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="col-lg-5">
+        <h5 class="mb-4 fw-700" style="color: var(--hsc-navy)">Get in Touch Directly</h5>
+
+        <div class="contact-info-card d-flex align-items-start gap-3 mb-3">
+          <div class="ci-icon"><i class="bi bi-geo-alt-fill"></i></div>
+          <div>
+            <strong>Our Office</strong>
+            <p class="mb-0 text-muted">42 Care Avenue, Health District,<br>New Delhi – 110001</p>
+          </div>
+        </div>
+
+        <div class="contact-info-card d-flex align-items-start gap-3 mb-3">
+          <div class="ci-icon"><i class="bi bi-telephone-fill"></i></div>
+          <div>
+            <strong>Phone Helpline</strong>
+            <p class="mb-0"><a href="tel:+919876543210" class="hsc-link">+91 98765 43210</a></p>
+            <small class="text-muted">Mon–Sat, 9 AM – 6 PM</small>
+          </div>
+        </div>
+
+        <div class="contact-info-card d-flex align-items-start gap-3 mb-3">
+          <div class="ci-icon"><i class="bi bi-envelope-fill"></i></div>
+          <div>
+            <strong>Email</strong>
+            <p class="mb-0"><a href="mailto:help@hsc-ngo.org" class="hsc-link">help@hsc-ngo.org</a></p>
+            <small class="text-muted">We reply within 1 business day</small>
+          </div>
+        </div>
+
+        <div class="contact-info-card d-flex align-items-start gap-3 mb-3">
+          <div class="ci-icon"><i class="bi bi-whatsapp"></i></div>
+          <div>
+            <strong>WhatsApp Support</strong>
+            <p class="mb-0"><a href="https://wa.me/919876543210" class="hsc-link">+91 98765 43210</a></p>
+            <small class="text-muted">Available 9 AM – 9 PM</small>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions mt-4">
+          <h6 class="fw-600 mb-3">Quick Actions</h6>
+          <a href="{{ url_for('patient_form') }}" class="btn hsc-btn-outline w-100 mb-2">
+            <i class="bi bi-clipboard2-heart me-2"></i>Submit Patient Request
+          </a>
+          <a href="{{ url_for('volunteer_form') }}" class="btn hsc-btn-green w-100">
+            <i class="bi bi-people me-2"></i>Register as Volunteer
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

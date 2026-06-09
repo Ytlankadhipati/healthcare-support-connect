@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% block title %}Patient Support Request — Healthcare Support Connect{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<section class="page-header">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col">
+        <div class="section-eyebrow"><i class="bi bi-clipboard2-heart me-2"></i>Patient Services</div>
+        <h1 class="page-title">Request Health Support</h1>
+        <p class="page-subtitle">
+          Fill in the form below and our team will connect you with a qualified volunteer within 24 hours.
+          All information is kept strictly confidential.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Form Section -->
+<section class="hsc-section bg-white">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+
+        <!-- AI Feature Notice -->
+        <div class="ai-notice mb-4">
+          <div class="ai-notice-icon"><i class="bi bi-stars"></i></div>
+          <div>
+            <strong>AI Health Summary</strong>
+            <span>After submitting, our AI assistant will automatically generate a concise summary of your health concern to help our volunteers respond faster.</span>
+          </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="form-card">
+          <div class="form-card-header">
+            <i class="bi bi-person-vcard-fill me-2"></i>Personal &amp; Health Information
+          </div>
+          <div class="form-card-body">
+            <form method="POST" action="{{ url_for('patient_form') }}" novalidate id="patientForm">
+
+              <!-- Row 1: Name + Age -->
+              <div class="row g-3 mb-3">
+                <div class="col-md-8">
+                  <label class="form-label" for="full_name">Full Name <span class="required">*</span></label>
+                  <div class="input-group-icon">
+                    <i class="bi bi-person"></i>
+                    <input type="text" class="form-control hsc-input ps-icon" id="full_name" name="full_name"
+                           placeholder="e.g. Priya Sharma"
+                           value="{{ form_data.get('full_name', '') }}"
+                           required maxlength="100" />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label" for="age">Age <span class="required">*</span></label>
+                  <div class="input-group-icon">
+                    <i class="bi bi-123"></i>
+                    <input type="number" class="form-control hsc-input ps-icon" id="age" name="age"
+                           placeholder="e.g. 35"
+                           value="{{ form_data.get('age', '') }}"
+                           min="1" max="120" required />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 2: Gender + Mobile -->
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="gender">Gender <span class="required">*</span></label>
+                  <div class="input-group-icon">
+                    <i class="bi bi-gender-ambiguous"></i>
+                    <select class="form-select hsc-input ps-icon" id="gender" name="gender" required>
+                      <option value="" disabled {% if not form_data.get('gender') %}selected{% endif %}>Select gender</option>
+                      <option value="Male"   {% if form_data.get('gender') == 'Male'   %}selected{% endif %}>Male</option>
+                      <option value="Female" {% if form_data.get('gender') == 'Female' %}selected{% endif %}>Female</option>
+                      <option value="Other"  {% if form_data.get('gender') == 'Other'  %}selected{% endif %}>Other</option>
+                      <option value="Prefer not to say" {% if form_data.get('gender') == 'Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="mobile">Mobile Number <span class="required">*</span></label>
+                  <div class="input-group-icon">
+                    <i class="bi bi-phone"></i>
+                    <input type="tel" class="form-control hsc-input ps-icon" id="mobile" name="mobile"
+                           placeholder="10-digit number"
+                           value="{{ form_data.get('mobile', '') }}"
+                           pattern="[0-9]{10}" maxlength="10" required />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="mb-3">
+                <label class="form-label" for="email">Email Address <span class="required">*</span></label>
+                <div class="input-group-icon">
+                  <i class="bi bi-envelope"></i>
+                  <input type="email" class="form-control hsc-input ps-icon" id="email" name="email"
+                         placeholder="e.g. priya@email.com"
+                         value="{{ form_data.get('email', '') }}"
+                         required />
+                </div>
+              </div>
+
+              <!-- Health Concern Category -->
+              <div class="mb-3">
+                <label class="form-label" for="health_concern">Health Concern Category <span class="required">*</span></label>
+                <div class="input-group-icon">
+                  <i class="bi bi-heart-pulse"></i>
+                  <select class="form-select hsc-input ps-icon" id="health_concern" name="health_concern" required>
+                    <option value="" disabled {% if not form_data.get('health_concern') %}selected{% endif %}>Select primary concern</option>
+                    {% for cat in [
+                      "General Medicine", "Fever & Infections", "Respiratory Issues",
+                      "Cardiovascular", "Diabetes & Metabolism", "Mental Health & Anxiety",
+                      "Women's Health", "Child Health & Paediatrics", "Orthopaedic & Bone",
+                      "Skin & Dermatology", "Ophthalmology", "Dental Health",
+                      "Nutrition & Diet", "Post-Surgery Care", "Other"
+                    ] %}
+                    <option value="{{ cat }}" {% if form_data.get('health_concern') == cat %}selected{% endif %}>{{ cat }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <!-- Message -->
+              <div class="mb-4">
+                <label class="form-label" for="message">
+                  Describe Your Concern <span class="required">*</span>
+                  <small class="text-muted ms-1">(minimum 20 characters)</small>
+                </label>
+                <textarea class="form-control hsc-textarea" id="message" name="message"
+                          rows="5" required minlength="20"
+                          placeholder="Please describe your symptoms, how long you've had them, and any medications you're currently taking...">{{ form_data.get('message', '') }}</textarea>
+                <div class="form-text char-count">
+                  <span id="charCount">0</span> characters entered
+                </div>
+              </div>
+
+              <!-- Privacy Notice -->
+              <div class="privacy-note mb-4">
+                <i class="bi bi-lock-fill me-2"></i>
+                Your information is stored securely and will only be used to connect you with a volunteer. We do not share personal data with any third party.
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary hsc-btn-primary btn-lg">
+                  <i class="bi bi-send-check me-2"></i>Submit Request
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+      </div><!-- /col -->
+
+      <!-- Sidebar Info -->
+      <div class="col-lg-3 offset-lg-1 mt-4 mt-lg-0">
+        <div class="sidebar-info sticky-top" style="top:80px">
+          <div class="sinfo-card">
+            <div class="sinfo-icon"><i class="bi bi-clock-history"></i></div>
+            <h6>Response Time</h6>
+            <p>We aim to respond to all requests within <strong>24 hours</strong>.</p>
+          </div>
+          <div class="sinfo-card mt-3">
+            <div class="sinfo-icon"><i class="bi bi-telephone"></i></div>
+            <h6>Urgent Help?</h6>
+            <p>Call our helpline: <strong>+91 98765 43210</strong></p>
+          </div>
+          <div class="sinfo-card mt-3">
+            <div class="sinfo-icon"><i class="bi bi-stars"></i></div>
+            <h6>AI Summary</h6>
+            <p>Your concern will be auto-summarised to help our volunteers act quickly.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Live character count for textarea
+  const msg = document.getElementById('message');
+  const count = document.getElementById('charCount');
+  if (msg && count) {
+    const update = () => count.textContent = msg.value.length;
+    msg.addEventListener('input', update);
+    update();
+  }
+
+  // Simple client-side validation highlight
+  document.getElementById('patientForm').addEventListener('submit', function(e) {
+    const mobile = document.getElementById('mobile').value;
+    if (!/^\d{10}$/.test(mobile)) {
+      e.preventDefault();
+      document.getElementById('mobile').classList.add('is-invalid');
+    }
+  });
+</script>
+{% endblock %}

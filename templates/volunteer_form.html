@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% block title %}Volunteer Registration — Healthcare Support Connect{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<section class="page-header page-header--green">
+  <div class="container">
+    <div class="section-eyebrow"><i class="bi bi-people-fill me-2"></i>Join Our Network</div>
+    <h1 class="page-title">Volunteer Registration</h1>
+    <p class="page-subtitle">
+      Share your skills and time to make a difference. Join our growing network of
+      healthcare volunteers serving communities across the country.
+    </p>
+  </div>
+</section>
+
+<!-- Form Section -->
+<section class="hsc-section bg-white">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+
+        <!-- Why Volunteer Banner -->
+        <div class="volunteer-banner mb-4">
+          <div class="row g-3 text-center">
+            <div class="col-4">
+              <div class="vb-stat">
+                <span class="vb-num">380+</span>
+                <span class="vb-label">Active Volunteers</span>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="vb-stat">
+                <span class="vb-num">18</span>
+                <span class="vb-label">Districts Covered</span>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="vb-stat">
+                <span class="vb-num">2,400+</span>
+                <span class="vb-label">Patients Helped</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="form-card">
+          <div class="form-card-header form-card-header--green">
+            <i class="bi bi-person-badge-fill me-2"></i>Volunteer Details
+          </div>
+          <div class="form-card-body">
+            <form method="POST" action="{{ url_for('volunteer_form') }}" novalidate id="volunteerForm">
+
+              <!-- Row 1: Name + Mobile -->
+              <div class="row g-3 mb-3">
+                <div class="col-md-7">
+                  <label class="form-label" for="full_name">Full Name <span class="required">*</span></label>
+                  <div class="input-group-icon">
+                    <i class="bi bi-person"></i>
+                    <input type="text" class="form-control hsc-input ps-icon" id="full_name" name="full_name"
+                           placeholder="e.g. Dr. Anil Mehta"
+                           value="{{ form_data.get('full_name', '') }}"
+                           required maxlength="100" />
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <label class="form-label" for="mobile">Mobile Number <span class="required">*</span></label>
+                  <div class="input-group-icon">
+                    <i class="bi bi-phone"></i>
+                    <input type="tel" class="form-control hsc-input ps-icon" id="mobile" name="mobile"
+                           placeholder="10-digit number"
+                           value="{{ form_data.get('mobile', '') }}"
+                           pattern="[0-9]{10}" maxlength="10" required />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="mb-3">
+                <label class="form-label" for="email">Email Address <span class="required">*</span></label>
+                <div class="input-group-icon">
+                  <i class="bi bi-envelope"></i>
+                  <input type="email" class="form-control hsc-input ps-icon" id="email" name="email"
+                         placeholder="e.g. anil.mehta@hospital.com"
+                         value="{{ form_data.get('email', '') }}"
+                         required />
+                </div>
+              </div>
+
+              <!-- Skills -->
+              <div class="mb-3">
+                <label class="form-label" for="skills">
+                  Skills / Expertise <span class="required">*</span>
+                  <small class="text-muted ms-1">(medical background, languages, etc.)</small>
+                </label>
+                <div class="input-group-icon">
+                  <i class="bi bi-award"></i>
+                  <input type="text" class="form-control hsc-input ps-icon" id="skills" name="skills"
+                         placeholder="e.g. General Physician, Hindi, First Aid, Paediatrics"
+                         value="{{ form_data.get('skills', '') }}"
+                         required maxlength="255" />
+                </div>
+                <div class="form-text">Separate multiple skills with commas.</div>
+              </div>
+
+              <!-- Availability -->
+              <div class="mb-3">
+                <label class="form-label" for="availability">Availability <span class="required">*</span></label>
+                <div class="input-group-icon">
+                  <i class="bi bi-calendar-check"></i>
+                  <select class="form-select hsc-input ps-icon" id="availability" name="availability" required>
+                    <option value="" disabled {% if not form_data.get('availability') %}selected{% endif %}>Select your availability</option>
+                    {% for opt in [
+                      "Weekdays (Morning)", "Weekdays (Evening)",
+                      "Weekends Only", "Weekdays + Weekends",
+                      "On-call / As Needed", "Full-time"
+                    ] %}
+                    <option value="{{ opt }}" {% if form_data.get('availability') == opt %}selected{% endif %}>{{ opt }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <!-- Address -->
+              <div class="mb-4">
+                <label class="form-label" for="address">Address <span class="required">*</span></label>
+                <div class="input-group-icon">
+                  <i class="bi bi-geo-alt"></i>
+                  <textarea class="form-control hsc-textarea ps-icon" id="address" name="address"
+                            rows="3" required
+                            placeholder="Street, City, State, PIN">{{ form_data.get('address', '') }}</textarea>
+                </div>
+              </div>
+
+              <!-- Consent -->
+              <div class="mb-4">
+                <div class="form-check hsc-check">
+                  <input class="form-check-input" type="checkbox" id="consent" required />
+                  <label class="form-check-label" for="consent">
+                    I agree to be contacted by Healthcare Support Connect for volunteer coordination. I understand this is a voluntary, unpaid role.
+                  </label>
+                </div>
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-lg hsc-btn-green">
+                  <i class="bi bi-person-check me-2"></i>Register as Volunteer
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+      </div><!-- /col -->
+
+      <!-- Sidebar -->
+      <div class="col-lg-3 offset-lg-1 mt-4 mt-lg-0">
+        <div class="sidebar-info sticky-top" style="top:80px">
+          <div class="sinfo-card sinfo-card--green">
+            <div class="sinfo-icon sinfo-icon--green"><i class="bi bi-heart"></i></div>
+            <h6>Make an Impact</h6>
+            <p>Our volunteers have collectively donated over <strong>12,000 hours</strong> of care this year.</p>
+          </div>
+          <div class="sinfo-card mt-3">
+            <div class="sinfo-icon"><i class="bi bi-award"></i></div>
+            <h6>We Welcome</h6>
+            <ul class="sinfo-list">
+              <li>Doctors &amp; Nurses</li>
+              <li>Pharmacists</li>
+              <li>Health Workers</li>
+              <li>Social Workers</li>
+              <li>Medical Students</li>
+            </ul>
+          </div>
+          <div class="sinfo-card mt-3">
+            <div class="sinfo-icon"><i class="bi bi-envelope-heart"></i></div>
+            <h6>Questions?</h6>
+            <p>Email us at <strong>volunteer@hsc-ngo.org</strong></p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('volunteerForm').addEventListener('submit', function(e) {
+    const mobile = document.getElementById('mobile').value;
+    if (!/^\d{10}$/.test(mobile)) {
+      e.preventDefault();
+      document.getElementById('mobile').classList.add('is-invalid');
+      document.getElementById('mobile').nextElementSibling?.remove();
+      const err = document.createElement('div');
+      err.className = 'invalid-feedback d-block';
+      err.textContent = 'Please enter a valid 10-digit mobile number.';
+      document.getElementById('mobile').after(err);
+    }
+  });
+</script>
+{% endblock %}
