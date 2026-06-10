@@ -145,7 +145,7 @@ healthcare-support-connect/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/healthcare-support-connect.git
+git clone https://github.com/Ytlankadhipati/healthcare-support-connect.git
 cd healthcare-support-connect
 ```
 
@@ -237,7 +237,7 @@ Click **Create Web Service**. Render will build and deploy automatically.
 ## 🔗 GitHub Repository
 
 ```
-https://github.com/YOUR_USERNAME/healthcare-support-connect
+https://github.com/Ytlankadhipati/healthcare-support-connect
 ```
 
 ---

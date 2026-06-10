@@ -4,6 +4,8 @@ NGO Healthcare Support Platform with AI-powered health query summarization
 """
 
 import sqlite3
+import os
+import google.generativeai as genai
 import re
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash, g
@@ -11,6 +13,9 @@ from flask import Flask, render_template, request, redirect, url_for, flash, g
 # ── App Setup ──────────────────────────────────────────────────────────────────
 app = Flask(__name__)
 app.secret_key = "hsc-secret-key-change-in-production-2024"
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 DATABASE = "database.db"
 
@@ -76,48 +81,26 @@ def init_db():
 
 
 # ── AI Summarizer ──────────────────────────────────────────────────────────────
-def summarize_health_query(health_concern: str, message: str) -> str:
-    """
-    Generate a concise, factual summary of the patient's health concern.
-    No diagnosis is made — only a plain-language restatement of the concern.
-    Uses the Anthropic API via the in-app fetch capability; falls back to a
-    rule-based summarizer if the API is unavailable.
-    """
+def summarize_health_query(health_concern, message):
     try:
-        import urllib.request
-        import json
+        prompt = f"""
+        Summarize the patient's health concern in one short sentence.
 
-        prompt = (
-            "You are a medical intake assistant. Summarize the following patient "
-            "health concern in one clear sentence. Do NOT provide any diagnosis, "
-            "medical advice, or treatment recommendation. Only restate the concern "
-            "factually and concisely.\n\n"
-            f"Health concern category: {health_concern}\n"
-            f"Patient message: {message}\n\n"
-            "Summary (one sentence, start with 'Patient reports'):"
-        )
+        Rules:
+        - Do not provide diagnosis.
+        - Do not provide treatment.
+        - Only summarize the concern.
 
-        payload = json.dumps(
-            {
-                "model": "claude-sonnet-4-20250514",
-                "max_tokens": 120,
-                "messages": [{"role": "user", "content": prompt}],
-            }
-        ).encode("utf-8")
+        Health Concern: {health_concern}
+        Patient Message: {message}
+        """
 
-        req = urllib.request.Request(
-            "https://api.anthropic.com/v1/messages",
-            data=payload,
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
+        response = model.generate_content(prompt)
 
-        with urllib.request.urlopen(req, timeout=8) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-            return data["content"][0]["text"].strip()
+        return response.text.strip()
 
-    except Exception:
-        # ── Fallback rule-based summarizer ────────────────────────────────────
+    except Exception as e:
+        print("Gemini Error:", e)
         return _rule_based_summary(health_concern, message)
 
 
@@ -206,7 +189,9 @@ def patient_form():
 
         # ── AI Summary ──────────────────────────────────────────────────────
         ai_summary = summarize_health_query(health_concern, message)
+        print("AI Summary:", ai_summary)
 
+        
         # ── Save to DB ──────────────────────────────────────────────────────
         db = get_db()
         db.execute(
